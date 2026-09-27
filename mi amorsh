@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Para ti - Horimiya Otoño</title>
+
+
+    <style>
+
+        /* =====================================
+           CONFIGURACIÓN GENERAL
+        ===================================== */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            /* Degradado cálido de otoño: crema -> calabaza -> terracota */
+            background: linear-gradient(
+                135deg,
+                #fdf1e0 0%,
+                #f2b872 55%,
+                #d9702e 100%
+            );
+
+            font-family:
+                'Helvetica Neue',
+                Arial,
+                sans-serif;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            height: 100vh;
+
+            min-height: 100vh;
+
+            overflow: hidden;
+
+            perspective: 1000px;
+
+            position: relative;
+        }
+
+
+        /* =====================================
+           IMAGEN DE FONDO HORI / MIYAMURA
+        ===================================== */
+
+        body::before {
+
+            content: "";
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            background-image:
+                url("Imagenes/hori.png");
+
+            background-repeat: no-repeat;
+
+            background-position:
+                center center;
+
+            /*
+             * Hace que la imagen cubra
+             * toda la pantalla.
+             */
+
+            background-size: cover;
+
+            /*
+             * AQUÍ CONTROLAS LA VISIBILIDAD DE LA IMAGEN
+             *
+             * La subí de 0.18 a 0.38 para que se note bien
+             * sin tapar el texto de la carta.
+             *
+             * 0.30 = suave
+             * 0.38 = visible (valor actual)
+             * 0.45 = bastante marcada
+             * 0.55+ = casi protagonista
+             */
+
+            opacity: 0.38;
+
+            /*
+             * La imagen queda detrás
+             * de todo el contenido.
+             */
+
+            z-index: 0;
+
+            pointer-events: none;
+        }
+
+        /*
+         * Capa extra sutil color calabaza sobre la imagen,
+         * para que el tono naranja "abrace" la foto en vez
+         * de dejarla fría.
+         */
+        body::after {
+
+            content: "";
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            background: radial-gradient(
+                circle at center,
+                rgba(217, 112, 46, 0) 40%,
+                rgba(160, 82, 45, 0.25) 100%
+            );
+
+            z-index: 1;
+
+            pointer-events: none;
+        }
+
+
+        /* =====================================
+           HOJAS DE OTOÑO CAYENDO
+        ===================================== */
+
+        .leaf {
+
+            position: absolute;
+
+            top: -10%;
+
+            /* forma de hoja: una punta y curvas suaves */
+            border-radius:
+                0% 70% 0% 70%;
+
+            opacity: 0.85;
+
+            animation-name: fall;
+
+            animation-iteration-count: infinite;
+
+            animation-timing-function: ease-in-out;
+
+            z-index: 2;
+
+            pointer-events: none;
+
+            box-shadow:
+                inset -2px -2px 3px
+                rgba(0, 0, 0, 0.15);
+        }
+
+
+        @keyframes fall {
+
+            0% {
+                top: -10%;
+                transform: translateX(0) rotate(0deg);
+            }
+
+            20% {
+                transform: translateX(60px) rotate(90deg);
+            }
+
+            40% {
+                transform: translateX(-40px) rotate(180deg);
+            }
+
+            60% {
+                transform: translateX(50px) rotate(230deg);
+            }
+
+            80% {
+                transform: translateX(-30px) rotate(310deg);
+            }
+
+            100% {
+                top: 110%;
+                transform: translateX(20px) rotate(380deg);
+            }
+        }
+
+
+        /* =====================================
+           CONTENEDOR PRINCIPAL
+        ===================================== */
+
+        .main-container {
+
+            position: relative;
+
+            margin-top: 120px;
+
+            z-index: 5;
+        }
+
+
+        /* =====================================
+           SOBRE
+        ===================================== */
+
+        .envelope-wrapper {
+
+            position: relative;
+
+            width: 340px;
+
+            height: 230px;
+
+            background-color: #e2894c;
+
+            border-bottom-left-radius: 10px;
+
+            border-bottom-right-radius: 10px;
+
+            box-shadow:
+                0 15px 40px
+                rgba(
+                    150,
+                    75,
+                    20,
+                    0.4
+                );
+
+            cursor: pointer;
+
+            transition:
+                transform 0.3s ease;
+
+            z-index: 10;
+        }
+
+
+        /* =====================================
+           FONDO INTERIOR DEL SOBRE
+        ===================================== */
+
+        .envelope-bg-image {
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            background-image: url("");
+
+            background-size:
+                100% 200%;
+
+            background-position:
+                top center;
+
+            background-repeat:
+                no-repeat;
+
+            border-bottom-left-radius: 10px;
+
+            border-bottom-right-radius: 10px;
+
+            z-index: 1;
+
+            opacity: 0;
+
+            transition:
+                opacity 0.5s
+                ease-in-out;
+        }
+
+
+        .envelope-wrapper.open
+        .envelope-bg-image {
+
+            opacity: 1;
+        }
+
+
+        /* =====================================
+           EFECTO AL PASAR EL RATÓN
+        ===================================== */
+
+        .envelope-wrapper:hover {
+
+            transform:
+                translateY(-5px);
+        }
+
+
+        /* =====================================
+           SOLAPA DEL SOBRE
+        ===================================== */
+
+        .envelope-flap {
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 0;
+            height: 0;
+
+            z-index: 5;
+
+            border-left:
+                170px solid transparent;
+
+            border-right:
+                170px solid transparent;
+
+            border-top:
+                115px solid #e2894c;
+
+            transform-origin:
+                top;
+
+            transition:
+                transform 0.4s
+                ease-in-out;
+        }
+
+
+        /* =====================================
+           LADOS DEL SOBRE
+        ===================================== */
+
+        .envelope-side {
+
+            position: absolute;
+
+            bottom: 0;
+
+            width: 0;
+            height: 0;
+
+            z-index: 4;
+        }
+
+
+        .side-left {
+
+            border-left:
+                170px solid #c1690f;
+
+            border-top:
+                115px solid transparent;
+
+            border-bottom:
+                115px solid #c1690f;
+
+            border-bottom-left-radius:
+                10px;
+        }
+
+
+        .side-right {
+
+            right: 0;
+
+            border-right:
+                170px solid #c1690f;
+
+            border-top:
+                115px solid transparent;
+
+            border-bottom:
+                115px solid #c1690f;
+
+            border-bottom-right-radius:
+                10px;
+        }
+
+
+        /* =====================================
+           CARTA
+        ===================================== */
+
+        .letter {
+
+            position: absolute;
+
+            bottom: 8px;
+
+            left: 15px;
+
+            width: 310px;
+
+            height: 210px;
+
+            background-color:
+                #fbe6c8;
+
+            background-image: url("");
+
+            background-size:
+                100% 200%;
+
+            background-position:
+                bottom center;
+
+            background-repeat:
+                no-repeat;
+
+            padding:
+                30px
+                25px
+                95px
+                25px;
+
+            border-radius: 6px;
+
+            box-shadow:
+                0 0 15px
+                rgba(
+                    120,
+                    60,
+                    20,
+                    0.15
+                );
+
+            z-index: 3;
+
+            transition:
+                transform 0.6s
+                cubic-bezier(
+                    0.175,
+                    0.885,
+                    0.32,
+                    1.1
+                ),
+
+                height 0.6s
+                ease-in-out;
+
+            overflow: hidden;
+
+            display: flex;
+
+            flex-direction: column;
+        }
+
+
+        /* =====================================
+           TÍTULO
+        ===================================== */
+
+        .letter h1 {
+
+            position: relative;
+
+            z-index: 1;
+
+            font-size: 16px;
+
+            color: #b3521a;
+
+            text-align: center;
+
+            margin-bottom: 8px;
+
+            font-weight: 600;
+        }
+
+
+        /* =====================================
+           CONTENIDO
+        ===================================== */
+
+        .letter-content {
+
+            position: relative;
+
+            z-index: 1;
+
+            font-size: 13px;
+
+            color: #4a3628;
+
+            line-height: 20px;
+
+            text-align: left;
+
+            overflow-y: auto;
+
+            max-height: 140px;
+        }
+
+
+        /* =====================================
+           HOJAS ESTÁTICAS DECORATIVAS
+           (impresas dentro del papel, no caen,
+           solo dan ambiente de otoño)
+        ===================================== */
+
+        .paper-leaf {
+
+            position: absolute;
+
+            border-radius:
+                0% 70% 0% 70%;
+
+            opacity: 0.28;
+
+            z-index: 0;
+
+            pointer-events: none;
+        }
+
+
+        .letter-content p {
+
+            margin-bottom: 12px;
+        }
+
+
+        /* =====================================
+           ANIMACIÓN AL ABRIR
+        ===================================== */
+
+        .envelope-wrapper.open
+        .envelope-flap {
+
+            transform:
+                rotateX(180deg);
+
+            z-index: 2;
+        }
+
+
+        .envelope-wrapper.open
+        .letter {
+
+            transform:
+                translateY(-170px);
+
+            height: 360px;
+
+            z-index: 6;
+        }
+
+
+        /* =====================================
+           ADAPTACIÓN PARA TELÉFONOS
+        ===================================== */
+
+        @media (max-width: 600px) {
+
+            .envelope-wrapper {
+
+                width: 320px;
+
+                height: 220px;
+            }
+
+
+            .envelope-flap {
+
+                border-left-width: 160px;
+
+                border-right-width: 160px;
+
+                border-top-width: 110px;
+            }
+
+
+            .side-left {
+
+                border-left-width: 160px;
+
+                border-top-width: 110px;
+
+                border-bottom-width: 110px;
+            }
+
+
+            .side-right {
+
+                border-right-width: 160px;
+
+                border-top-width: 110px;
+
+                border-bottom-width: 110px;
+            }
+
+
+            .letter {
+
+                width: 290px;
+
+                left: 15px;
+            }
+
+
+            /*
+             * En teléfono dejamos la imagen un poco
+             * más visible, igual que en escritorio.
+             */
+
+            body::before {
+
+                background-size: cover;
+
+                background-position:
+                    center center;
+
+                opacity: 0.36;
+            }
+
+        }
+
+
+        /* =====================================
+           TELÉFONOS PEQUEÑOS
+        ===================================== */
+
+        @media (max-width: 390px) {
+
+            .envelope-wrapper {
+
+                width: 300px;
+
+                height: 205px;
+            }
+
+
+            .envelope-flap {
+
+                border-left-width: 150px;
+
+                border-right-width: 150px;
+
+                border-top-width: 102px;
+            }
+
+
+            .side-left {
+
+                border-left-width: 150px;
+
+                border-top-width: 102px;
+
+                border-bottom-width: 102px;
+            }
+
+
+            .side-right {
+
+                border-right-width: 150px;
+
+                border-top-width: 102px;
+
+                border-bottom-width: 102px;
+            }
+
+
+            .letter {
+
+                width: 270px;
+
+                height: 190px;
+
+                left: 15px;
+            }
+
+
+            .letter h1 {
+
+                font-size: 15px;
+            }
+
+
+            .letter-content {
+
+                font-size: 12px;
+
+                line-height: 18px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =================================
+         HOJAS DE OTOÑO CAYENDO
+         (8 hojas, distintos naranjas/rojizos,
+         tamaños y velocidades para que no
+         se vea repetitivo)
+    ================================= -->
+
+
+    <div
+        class="leaf"
+        style="
+            left: 5%;
+            width: 20px;
+            height: 20px;
+            background-color: #d9702e;
+            animation-delay: 0s;
+            animation-duration: 7s;
+        "
+    ></div>
+
+
+    <div
+        class="leaf"
+        style="
+            left: 18%;
+            width: 16px;
+            height: 16px;
+            background-color: #c1440e;
+            animation-delay: 2s;
+            animation-duration: 9s;
+        "
+    ></div>
+
+
+    <div
+        class="leaf"
+        style="
+            left: 32%;
+            width: 22px;
+            height: 22px;
+            background-color: #e8a33d;
+            animation-delay: 1s;
+            animation-duration: 8s;
+        "
+    ></div>
+
+
+    <div
+        class="leaf"
+        style="
+            left: 48%;
+            width: 18px;
+            height: 18px;
+            background-color: #a0522d;
+            animation-delay: 4s;
+            animation-duration: 10s;
+        "
+    ></div>
+
+
+    <div
+        class="leaf"
+        style="
+            left: 62%;
+            width: 20px;
+            height: 20px;
+            background-color: #f2994a;
+            animation-delay: 0.5s;
+            animation-duration: 7.5s;
+        "
+    ></div>
+
+
+    <div
+        class="leaf"
+        style="
+            left: 75%;
+            width: 17px;
+            height: 17px;
+            background-color: #b5651d;
+            animation-delay: 3s;
+            animation-duration: 9.5s;
+        "
+    ></div>
+
+
+    <div
+        class="leaf"
+        style="
+            left: 88%;
+            width: 19px;
+            height: 19px;
+            background-color: #d9702e;
+            animation-delay: 5.5s;
+            animation-duration: 8s;
+        "
+    ></div>
+
+
+    <div
+        class="leaf"
+        style="
+            left: 95%;
+            width: 15px;
+            height: 15px;
+            background-color: #c1440e;
+            animation-delay: 1.5s;
+            animation-duration: 6.5s;
+        "
+    ></div>
+
+
+
+    <!-- =================================
+         CONTENEDOR PRINCIPAL
+    ================================= -->
+
+    <div class="main-container">
+
+
+        <!-- =================================
+             SOBRE
+        ================================= -->
+
+        <div
+            class="envelope-wrapper"
+            onclick="toggleEnvelope(this)"
+        >
+
+
+            <div class="envelope-flap"></div>
+
+
+            <div
+                class="envelope-side side-left"
+            ></div>
+
+
+            <div
+                class="envelope-side side-right"
+            ></div>
+
+
+            <div
+                class="envelope-bg-image"
+            ></div>
+
+
+
+            <!-- =================================
+                 CARTA
+            ================================= -->
+
+            <div class="letter">
+
+
+                <!-- Hojas decorativas impresas en el papel -->
+
+                <div
+                    class="paper-leaf"
+                    style="
+                        top: -14px;
+                        right: -10px;
+                        width: 55px;
+                        height: 55px;
+                        background-color: #c1440e;
+                        transform: rotate(20deg);
+                    "
+                ></div>
+
+
+                <div
+                    class="paper-leaf"
+                    style="
+                        top: 10px;
+                        right: 30px;
+                        width: 28px;
+                        height: 28px;
+                        background-color: #e8a33d;
+                        transform: rotate(-35deg);
+                    "
+                ></div>
+
+
+                <div
+                    class="paper-leaf"
+                    style="
+                        bottom: -12px;
+                        left: -8px;
+                        width: 48px;
+                        height: 48px;
+                        background-color: #d9702e;
+                        transform: rotate(-160deg);
+                    "
+                ></div>
+
+
+                <div
+                    class="paper-leaf"
+                    style="
+                        bottom: 25px;
+                        left: 20px;
+                        width: 24px;
+                        height: 24px;
+                        background-color: #a0522d;
+                        transform: rotate(200deg);
+                    "
+                ></div>
+
+
+                <h1>
+                    Para mi amorsh🍂
+                </h1>
+
+
+                <div class="letter-content">
+
+
+                    <p>
+                   No sé cómo empezar realmente. Eres la primera mujer a la que le escribo una carta, es interesante, ¿no? Todavía recuerdo la primera vez que interactué contigo. Al principio no sabía quién eras, pero recuerdo esa tarde que entré al grupo y me colocaron en tu equipo. Realmente el sentimiento al verte no puedo describirlo, no sentía eso desde hace mucho tiempo. Al principio no hablábamos, de hecho no sabía tu nombre hasta que me lo dijeron y dije: "Ahhh, con que así se llama, interesante".Poco a poco empezamos a hablar, y ¡qué manera de hablarte! Respondiendo a una historia preguntando por tus pósters. Obviamente no quería ir por lo más básico, por lo que todos comentarían: que eres muy hermosa. Obvio eso ya lo sabes, y sinceramente esa primera vez estaba nervioso porque no sabía cómo hablarte. Poco a poco empezamos a hablar mucho más, a reírnos, y recuerdo cuando empezó todo como tal: esa noche de Among Us. Aunque ya tenía cierta sospecha, en específico esa noche pude confirmarlo. Y cuando te propuse ver una película, naaah, no pensé que aceptarías, obvio tenías un interés, pero ya vamos a ese punto JAJAJAJAJJAJ.Esa primera vez que vimos Divergente, qué película más buena y justo en ese chat, mientras la veíamos, empezamos a coquetear ya de una manera más evidente. Al día siguiente, bueno... me dijiste "Te amo"... Ya sé, ya sé, lo dije yo primero JAJAJAJAJ, pero qué sentimiento más bonito tuve. Seguimos hablando y cada vez conocía un poquito más de ti. Me encantan tus locuras, lo graciosa que eres, lo inteligente (que a pesar de que diga que no lo eres, sí lo eres). Tus gustos musicales son increíbles; de hecho, me robé ciertas canciones que nunca había escuchado y todavía no me pasas la playlist, la llevo esperando ya un tiempo. Aunque tus gustos de los animes están medio raros desde hace un tiempo para acá AJJAJAJAJAJAJAJ, no vamos a mencionar nombres, pero ya sabes JAJAJAJJAJAJA.No tienes idea de los momentos que me has hecho pasar. Esas noches cuando hablamos siento que conectamos de una manera indescriptible. A veces me pones muy celoso, pero lo haces adrede. La verdad no sé qué me hiciste, pero estoy loco por ti. Te amo muchooo muchooo. No esperaba sentir esto de nuevo, pero quiero hacerte entender algo, justo como Miyamura le dijo a Hori: どこにも行かないよ...俺はここにいるよ (No voy a ninguna parte. Hasta que digas que no me necesitas aquí, o te enfermes y hartes de ver mi cara, o me digas que me vaya... Yo me quedaré justo aquí).Te amo mucho mi amor, de Número 2 para Número 1, ¿recuerdas eso? JAJAJAJJA qué momento, cómo coqueteábamos con eso. Me encantas, te amo mucho. ❤️
+                    </p
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================
+         JAVASCRIPT
+    ================================= -->
+
+    <script>
+
+        function toggleEnvelope(envelope) {
+
+            envelope.classList.toggle("open");
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>
